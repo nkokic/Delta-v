@@ -56,5 +56,9 @@
             <Label Name="TargetedPowerSupply" Text="0" />
             <Label Text=" kW" />
         </BoxContainer>
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True" Margin="15 0 0 15" SeparationOverride="5">
+            <Slider Name="InjectionRateSlider" HorizontalExpand="True"/>
+            <FloatSpinBox Name="InjectionRate" MaxWidth="150" Align="Center"/>
+        </BoxContainer>
     </GridContainer>
 </DefaultWindow>
