@@ -39,6 +39,7 @@ public sealed class AmeControllerSystem : EntitySystem
         SubscribeLocalEvent<AmeControllerComponent, EntRemovedFromContainerMessage>(OnItemSlotChanged);
         SubscribeLocalEvent<AmeControllerComponent, PowerChangedEvent>(OnPowerChanged);
         SubscribeLocalEvent<AmeControllerComponent, UiButtonPressedMessage>(OnUiButtonPressed);
+        SubscribeLocalEvent<AmeControllerComponent, UiSliderValueMessage>(OnUiSliderChanged);
     }
 
     private void OnInit(EntityUid uid, AmeControllerComponent component, ComponentInit args)
@@ -290,13 +291,13 @@ public sealed class AmeControllerSystem : EntitySystem
         */
     }
 
-    public void AdjustInjectionAmount(EntityUid uid, int delta, EntityUid? user = null, AmeControllerComponent? controller = null)
+    public void AdjustInjectionAmount(EntityUid uid, int amount, EntityUid? user = null, AmeControllerComponent? controller = null)
     {
         if (!Resolve(uid, ref controller))
             return;
 
         var max = GetMaxInjectionAmount((uid, controller));
-        SetInjectionAmount(uid, MathHelper.Clamp(controller.InjectionAmount + delta, 0, max), user, controller);
+        SetInjectionAmount(uid, MathHelper.Clamp(amount, 0, max), user, controller);
     }
 
     public int GetMaxInjectionAmount(Entity<AmeControllerComponent> ent)
@@ -359,13 +360,32 @@ public sealed class AmeControllerSystem : EntitySystem
             case UiButton.ToggleInjection:
                 ToggleInjecting(uid, user: user, controller: comp);
                 break;
-            case UiButton.IncreaseFuel:
-                AdjustInjectionAmount(uid, +1, user: user, controller: comp); // DeltaV - was +2
-                break;
-            case UiButton.DecreaseFuel:
-                AdjustInjectionAmount(uid, -1, user: user, controller: comp); // DeltaV - was -2
-                break;
+            //case UiButton.IncreaseFuel:
+            //    AdjustInjectionAmount(uid, +1, user: user, controller: comp); // DeltaV - was +2
+            //    break;
+            //case UiButton.DecreaseFuel:
+            //    AdjustInjectionAmount(uid, -1, user: user, controller: comp); // DeltaV - was -2
+            //    break;
         }
+
+        if (TryGetAMENodeGroup(uid, out var group))
+            group.UpdateCoreVisuals();
+
+        UpdateUi(uid, comp);
+    }
+
+    private void OnUiSliderChanged(EntityUid uid, AmeControllerComponent comp, UiSliderValueMessage msg)
+    {
+        var user = msg.Actor;
+        var amount = (int)MathF.Round(msg.Value);
+
+        if (!Exists(user))
+            return;
+
+        if (!PlayerCanUseController(uid, user, true, comp))
+            return;
+
+        AdjustInjectionAmount(uid, amount, user: user, controller: comp);
 
         if (TryGetAMENodeGroup(uid, out var group))
             group.UpdateCoreVisuals();

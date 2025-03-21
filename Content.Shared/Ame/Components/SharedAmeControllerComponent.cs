@@ -47,6 +47,17 @@ public sealed class UiButtonPressedMessage : BoundUserInterfaceMessage
 }
 
 [Serializable, NetSerializable]
+public sealed class UiSliderValueMessage : BoundUserInterfaceMessage
+{
+    public readonly float Value;
+
+    public UiSliderValueMessage(float value)
+    {
+        Value = value;
+    }
+}
+
+[Serializable, NetSerializable]
 public enum AmeControllerUiKey
 {
     Key

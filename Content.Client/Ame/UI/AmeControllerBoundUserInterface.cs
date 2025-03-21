@@ -1,4 +1,5 @@
 using Content.Shared.Ame.Components;
+using Content.Shared.Atmos.Piping.Binary.Components;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
 
@@ -19,6 +20,7 @@ namespace Content.Client.Ame.UI
 
             _window = this.CreateWindow<AmeWindow>();
             _window.OnAmeButton += ButtonPressed;
+            _window.InjectionRateSet += InjectionRateSet;
         }
 
         /// <summary>
@@ -39,6 +41,11 @@ namespace Content.Client.Ame.UI
         public void ButtonPressed(UiButton button)
         {
             SendMessage(new UiButtonPressedMessage(button));
+        }
+
+        private void InjectionRateSet(float value)
+        {
+            SendMessage(new UiSliderValueMessage(value));
         }
     }
 }
