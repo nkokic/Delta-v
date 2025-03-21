@@ -33,8 +33,9 @@ namespace Content.Client.Atmos.UI
             ReleaseValveOpenButton.OnPressed += _ => ReleaseValveOpenButtonPressed?.Invoke();
 
             TankEjectButton.OnPressed += _ => TankEjectButtonPressed?.Invoke();
-            InjectionRateSlider.OnKeyBindUp += OnReleasePressureSliderReleased;
-            InjectionRateSlider.OnValueChanged += OnReleasePressureSliderChanged;
+            ReleasePressureSlider.OnKeyBindUp += OnReleasePressureSliderReleased;
+            ReleasePressureSlider.OnValueChanged += OnReleasePressureSliderChanged;
+            ReleasePressure.OnValueChanged += OnReleasePressureChanged;
         }
 
         private void OnReleasePressureChanged(FloatSpinBox.FloatSpinBoxEventArgs args)
